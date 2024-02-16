@@ -1,0 +1,17 @@
+spring:
+  application:
+    name:  digma-otel-grafana
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+  otlp:
+    tracing:
+      endpoint: http://localhost:4317/v1/traces
+      export:
+        step: 5s
+  tracing:
+    sampling:
+      probability: 1.0

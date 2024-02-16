@@ -1,0 +1,36 @@
+extensions:
+  basicauth/otlp:
+    client_auth:
+      username: ${GRAFANA_CLOUD_INSTANCE_ID}
+      password: ${GRAFANA_CLOUD_API_TOKEN}
+
+receivers:
+  otlp:
+    protocols:
+      http:
+      grpc:
+
+processors:
+  batch:
+
+exporters:
+  otlphttp:
+    auth:
+      authenticator: basicauth/otlp
+    endpoint: ${GRAFANA_CLOUD_OTLP_ENDPOINT}
+
+  logging:
+    loglevel: debug
+
+  otlp/digma:
+    endpoint: ${OTLP_EXPORTER_DIGMA_COLLECTOR_API}
+    tls:
+      insecure: true
+
+service:
+  extensions: [basicauth/otlp]
+  pipelines:
+    traces:
+      receivers:  [ otlp ]
+      processors: [ batch ]
+      exporters:  [ logging , otlphttp , otlp/digma ]
